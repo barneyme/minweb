@@ -1,0 +1,79 @@
+MIN WEB
+A Minimal Web Site Application.
+---
+Welcome.
+
+Welcome to MIN WEB.
+
+MIN WEB is minimal website Application. It can be used for simple, lightweight, minimalist websites or blogs. MIN WEB consists of two files - a small .HTML file for the application and a .TXT file for configuration and content.
+
+Features include:
+- Free to use.
+- Previous/Next buttons to browse through posts.
+- Post counter showing current position with URL hash tracking so you can bookmark/share specific posts.
+- Collapsible TOC showing all post titles.
+- Converts URLs in post content into clickable links.
+- Automatically loads web.txt on page load, or lets you manually upload a file via "Load web.txt" link.
+- Clean, newspaper-style layout with Georgia serif font.
+- Responsive padding and typography.
+- Very fast loading.
+- Hover effects on interactive elements.
+- Shows error messages for invalid file format.
+- Works on any web server.
+- Did we mention free to use.
+
+---
+Setup.
+
+MIN WEB is quick and easy to setup.
+
+1. Download MINWEB.ZIP from https://drive.google.com/file/d/1qHAks0l_gCFlfj0rZVj0RAY8OoWqcp7s/view?usp=sharing and extract it.
+2. Open WEB.TXT in any plaintext editor. (E.G. Notepad or Textedit.)
+3. Update the first two lines of the file to set your website or blog name and sub-title.
+4. Write your content separating each page or post with ---.
+5. Upload the INDEX.HTML and WEB.TXT file to a web server. Your website or blog is now live. If you need your own webserver try https://caddyserver.com/ and if you need a free web host try https://neocities.com or https://pages.cloudflare.com . You can also run MIN WEB locally open the .html in any web browser and load the .txt file.
+
+---
+FAQ.
+
+How much does MIN WEB cost?
+Zero. Zilch. Nada, Nothing.
+
+Can you add this feature?
+No. MIN WEB is intended to be a minimalist application.
+
+Why is plaintext great?
+Plaintext files can be opened on virtually any device or operating system (Windows PC, Mac, Linux machine, smartphone, or ancient computer.) Plaintext files don't require proprietary software to read and edit them. This universal compatibility means your documents remain accessible regardless of technological changes or software limitations.
+
+Plaintext files are lightweight in file size. This means they have minimal storage requirements and can be copied and transfered quickly. Plaintext is plain FAST!
+
+Plaintext files are future proof. They have no proprietary format dependencies which means you are guaranteed long-term readability and preservation.
+
+Plaintext files are flexibie. With proprietary files you have to follow the makers format. With plaintext files you are in control.
+
+Plaintext files are distraction free. With no formatting (and no annoying auto formatting to fight with) you can just focus on your work.
+
+Plaintext websites are fast and work great on slow internet connections. Some great plaintext websites are:
+- DuckDuckGo Lite: https://ddg.gg/lite
+- Goosh: https://goosh.org
+- 68k News: https://68k.news
+- NPR Text: https://text.npr.org
+- Plaintext Sports: https://plaintextsports.com
+- Weather: https://wttr.in
+
+Can I buy you a coffee to show my appreciation for MIN WEB?
+Absolutely! https://buymeacoffee.com/barneymatthews
+
+---
+Credit.
+
+MIN WEB was created by Barney Matthews.
+
+Find him on the web at https://minweb.cc/blog.html .
+
+Some of Barneys other webapps include:
+https://not3.cc - a simple, touch friendly, note web app.
+https://editr.cc - a fluxbox inspired, fully featured plaintext editor web app.
+https://show.me.org - a simple screen sharing tool for tech support.
+
+Copyleft 2025.

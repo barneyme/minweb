@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>My Blog</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: Georgia, serif;
+                line-height: 1.6;
+                color: #333;
+                background: #f5f5f5;
+                padding: 20px;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                background: white;
+                padding: 40px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+            }
+            header {
+                border-bottom: 2px solid #333;
+                padding-bottom: 20px;
+                margin-bottom: 30px;
+            }
+            h1 {
+                font-size: 2.5em;
+                margin-bottom: 10px;
+            }
+            .subtitle {
+                color: #666;
+                font-size: 1.1em;
+                font-style: italic;
+            }
+            .post-title {
+                font-size: 1.8em;
+                margin-bottom: 10px;
+                color: #222;
+            }
+            .post-content {
+                white-space: pre-wrap;
+                line-height: 1.8;
+                color: #444;
+            }
+            .post-content a {
+                color: #0066cc;
+                text-decoration: none;
+            }
+            .post-content a:hover {
+                text-decoration: underline;
+            }
+            .navigation {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #ddd;
+                color: #666;
+                font-size: 0.9em;
+            }
+            .nav-link {
+                cursor: pointer;
+                transition: color 0.2s;
+            }
+            .nav-link:hover:not(.disabled) {
+                color: #333;
+            }
+            .nav-link.disabled {
+                color: #ccc;
+                cursor: not-allowed;
+            }
+            .post-counter {
+                color: #666;
+                font-size: 0.9em;
+            }
+            .load-link {
+                text-align: center;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #ddd;
+            }
+            .load-link a {
+                color: #666;
+                text-decoration: none;
+                font-size: 0.9em;
+                cursor: pointer;
+            }
+            .load-link a:hover {
+                color: #333;
+                text-decoration: underline;
+            }
+            .error {
+                color: #d00;
+                padding: 10px;
+                background: #fee;
+                border-radius: 4px;
+                margin-bottom: 20px;
+                display: none;
+            }
+            #header,
+            #content,
+            #toc {
+                display: none;
+            }
+            #toc {
+                border-bottom: 1px solid #eee;
+                padding: 10px 0;
+                margin-bottom: 20px;
+                cursor: pointer;
+            }
+            #toc:hover {
+                border-bottom-color: #ccc;
+            }
+            .toc-header {
+                display: flex;
+                justify-content: space-between;
+                color: #888;
+                font-size: 0.9em;
+            }
+            .toc-arrow {
+                transition: transform 0.3s;
+                font-size: 0.8em;
+                color: #aaa;
+            }
+            .toc-arrow.open {
+                transform: rotate(180deg);
+            }
+            .toc-list {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s;
+            }
+            .toc-list.open {
+                max-height: 500px;
+                margin-top: 10px;
+            }
+            .toc-item {
+                padding: 6px 0;
+                cursor: pointer;
+                color: #999;
+                font-size: 0.9em;
+                transition: color 0.2s;
+            }
+            .toc-item:hover {
+                color: #666;
+            }
+            .toc-item.active {
+                color: #555;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div id="error" class="error"></div>
+            <header id="header">
+                <h1 id="title"></h1>
+                <p class="subtitle" id="subtitle"></p>
+            </header>
+            <div id="toc">
+                <div
+                    class="toc-header"
+                    onclick="document.querySelector('.toc-list').classList.toggle('open');document.querySelector('.toc-arrow').classList.toggle('open')"
+                >
+                    <span>Contents</span>
+                    <span class="toc-arrow">▼</span>
+                </div>
+                <div class="toc-list"></div>
+            </div>
+            <div id="content">
+                <article>
+                    <h2 class="post-title" id="postTitle"></h2>
+                    <div class="post-content" id="postContent"></div>
+                </article>
+                <div class="navigation">
+                    <span class="nav-link" id="prev">← Last</span>
+                    <span
+                        ><span id="current">1</span> of
+                        <span id="total">1</span></span
+                    >
+                    <span class="nav-link" id="next">Next →</span>
+                </div>
+            </div>
+            <div class="load-link">
+                <a onclick="file.click()">Load web.txt</a>
+                <input
+                    type="file"
+                    id="file"
+                    accept=".txt"
+                    style="display: none"
+                />
+            </div>
+        </div>
+
+        <script>
+            const $ = (id) => document.getElementById(id);
+            let posts = [],
+                idx = 0;
+
+            const show = (msg) => {
+                $("error").textContent = msg;
+                $("error").style.display = msg ? "block" : "none";
+                $("header").style.display =
+                    $("content").style.display =
+                    $("toc").style.display =
+                        msg ? "none" : "block";
+            };
+
+            const parse = (txt) => {
+                const lines = txt.split("\n");
+                if (lines.length < 2)
+                    return show(
+                        "Invalid web.txt format. Need at least blog title and subtitle.",
+                    );
+
+                $("title").textContent = document.title = lines[0].trim();
+                $("subtitle").textContent = lines[1].trim();
+                posts = [];
+                let post = null;
+
+                for (let i = 2; i < lines.length; i++) {
+                    if (lines[i].startsWith("---")) {
+                        if (post?.title) posts.push(post);
+                        post = { title: "", content: "" };
+                    } else if (post) {
+                        post.title
+                            ? (post.content += lines[i] + "\n")
+                            : (post.title = lines[i].trim());
+                    }
+                }
+                if (post?.title) posts.push(post);
+                if (!posts.length)
+                    return show(
+                        'No posts found in web.txt. Posts should start with "---"',
+                    );
+
+                show("");
+                const hash = parseInt(location.hash.substring(1));
+                idx = hash >= 1 && hash <= posts.length ? hash - 1 : 0;
+
+                document.querySelector(".toc-list").innerHTML = posts
+                    .map(
+                        (p, i) =>
+                            `<div class="toc-item" onclick="idx=${i};display()">${i + 1}. ${p.title}</div>`,
+                    )
+                    .join("");
+
+                display();
+            };
+
+            const display = () => {
+                const p = posts[idx];
+                $("postTitle").textContent = p.title;
+
+                // Convert URLs to clickable links
+                const content = p.content
+                    .trim()
+                    .replace(
+                        /(https?:\/\/[^\s]+)/g,
+                        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
+                    );
+                $("postContent").innerHTML = content;
+
+                $("current").textContent = idx + 1;
+                $("total").textContent = posts.length;
+                location.hash = idx + 1;
+
+                $("prev").classList.toggle("disabled", idx === 0);
+                $("next").classList.toggle(
+                    "disabled",
+                    idx === posts.length - 1,
+                );
+
+                document
+                    .querySelectorAll(".toc-item")
+                    .forEach((el, i) =>
+                        el.classList.toggle("active", i === idx),
+                    );
+                document.querySelector(".toc-list").classList.remove("open");
+                document.querySelector(".toc-arrow").classList.remove("open");
+            };
+
+            window.onload = () =>
+                fetch("web.txt")
+                    .then((r) => r.text())
+                    .then(parse)
+                    .catch(() => {});
+            file.onchange = (e) => {
+                const reader = new FileReader();
+                reader.onload = (e) => parse(e.target.result);
+                reader.readAsText(e.target.files[0]);
+            };
+            prev.onclick = () => {
+                if (idx > 0) {
+                    idx--;
+                    display();
+                }
+            };
+            next.onclick = () => {
+                if (idx < posts.length - 1) {
+                    idx++;
+                    display();
+                }
+            };
+        </script>
+    </body>
+</html>
