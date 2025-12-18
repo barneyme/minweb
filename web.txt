@@ -1,11 +1,11 @@
 MIN WEB
-A Minimal Web Site Application.
+Minimal Web CMS.
 ---
 Welcome.
 
 Welcome to MIN WEB.
 
-MIN WEB is minimal website Application. It can be used for simple, lightweight, minimalist websites or blogs. MIN WEB consists of two files - a small .HTML file for the application and a .TXT file for configuration and content.
+MIN WEB is a minimal, flat file, website content management system. It can be used for simple, lightweight, minimalist websites or blogs. MIN WEB consists of two files - a small .HTML file for the application and a .TXT file for configuration and content.
 
 Features include:
 - Free to use.
@@ -40,7 +40,7 @@ How much does MIN WEB cost?
 Zero. Zilch. Nada, Nothing.
 
 Can you add this feature?
-No. MIN WEB is intended to be a minimalist application.
+Nope. MIN WEB is intended to be a minimalist application. If you want more features use Wordpress because it can do all the things. :-)
 
 Why is plaintext great?
 Plaintext files can be opened on virtually any device or operating system (Windows PC, Mac, Linux machine, smartphone, or ancient computer.) Plaintext files don't require proprietary software to read and edit them. This universal compatibility means your documents remain accessible regardless of technological changes or software limitations.
