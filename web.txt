@@ -5,12 +5,14 @@ Welcome.
 
 Welcome to MIN WEB.
 
-MIN WEB is a minimal, flat file, website content management system. It can be used for simple, lightweight, minimalist websites or blogs. MIN WEB consists of two files - a small .HTML file for the application and a .TXT file for configuration and content.
+MIN WEB is a minimal, flat file, website content management system. It can be used for simple, lightweight, minimalist websites or blogs.
+
+MIN WEB consists of two files - a small .HTML file for the application and a .TXT file for configuration and content.
 
 Features include:
-- Free to use.
 - Previous/Next buttons to browse through posts.
-- Post counter showing current position with URL hash tracking so you can bookmark/share specific posts.
+- Post counter showing current position.
+- URL hash tracking so you can bookmark/share specific posts.
 - Collapsible TOC showing all post titles.
 - Converts URLs in post content into clickable links.
 - Automatically loads web.txt on page load, or lets you manually upload a file via "Load web.txt" link.
@@ -20,18 +22,36 @@ Features include:
 - Hover effects on interactive elements.
 - Shows error messages for invalid file format.
 - Works on any web server.
-- Did we mention free to use.
+- Free.
 
 ---
 Setup.
 
 MIN WEB is quick and easy to setup.
 
-1. Download MINWEB.ZIP from https://drive.google.com/file/d/1qHAks0l_gCFlfj0rZVj0RAY8OoWqcp7s/view?usp=sharing and extract it.
+1. Download MINWEB.ZIP from https://drive.google.com/file/d/13sgkE6qamympBWwgH7Uu6ugai4unIVHI/view?usp=sharing and extract it.
 2. Open WEB.TXT in any plaintext editor. (E.G. Notepad or Textedit.)
 3. Update the first two lines of the file to set your website or blog name and sub-title.
 4. Write your content separating each page or post with ---.
 5. Upload the INDEX.HTML and WEB.TXT file to a web server. Your website or blog is now live. If you need your own webserver try https://caddyserver.com/ and if you need a free web host try https://neocities.com or https://pages.cloudflare.com . You can also run MIN WEB locally open the .html in any web browser and load the .txt file.
+
+SAMPLE WEB.TXT
+Cool site name
+Great tag line
+- - -
+Welcome.
+
+Welcome to my cool site.
+
+It is very cool.
+
+- - -
+First post
+This is my first very interesting blog post.
+
+- - -
+Second post
+This is the second most interesting blog post i've written.
 
 ---
 FAQ.
