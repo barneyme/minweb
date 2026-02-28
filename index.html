@@ -1,253 +1,448 @@
 <!doctype html>
 <html lang="en">
-    <title>Blog</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font:
-                1em/1.6 Georgia,
-                serif;
-            color: #333;
-            background: #f5f5f5;
-            padding: 20px;
-        }
-        .b {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 40px;
-            box-shadow: 0 2px 10px #0002;
-            border-radius: 8px;
-        }
-        header {
-            border-bottom: 2px solid #333;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-        h1 {
-            font-size: 2.5em;
-            cursor: pointer;
-            display: inline-block;
-        }
-        .s {
-            color: #666;
-            font: italic 1.1em serif;
-        }
-        .T {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-            color: #222;
-        }
-        .C {
-            white-space: pre-wrap;
-            color: #444;
-            line-height: 1.8;
-        }
-        a {
-            color: #06c;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .n {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-            color: #666;
-            font-size: 0.9em;
-        }
-        .l {
-            cursor: pointer;
-        }
-        .l:hover:not(.d) {
-            color: #333;
-        }
-        .d {
-            color: #ccc;
-            cursor: not-allowed;
-        }
-        #h,
-        #c,
-        #o {
-            display: none;
-        }
-        #o {
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
-            margin-bottom: 20px;
-            font-size: 0.9em;
-        }
-        .th {
-            display: flex;
-            justify-content: space-between;
-            color: #888;
-            cursor: pointer;
-        }
-        .ta {
-            transition: 0.3s;
-        }
-        .ta.open {
-            transform: rotate(180deg);
-        }
-        .tl {
-            max-height: 0;
-            overflow: hidden;
-            transition: 0.3s;
-        }
-        /* Added overflow-y: auto and limited max-height for scrollbar */
-        .tl.open {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 10px;
-            padding-right: 5px;
-        }
-        .ti {
-            padding: 6px 0;
-            cursor: pointer;
-            color: #999;
-        }
-        .ti.active {
-            color: #555;
-        }
-        .f {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-            font-size: 0.9em;
-        }
-        /* Subtle scrollbar styling */
-        .tl::-webkit-scrollbar {
-            width: 5px;
-        }
-        .tl::-webkit-scrollbar-thumb {
-            background: #ddd;
-            border-radius: 10px;
-        }
-    </style>
-    <div class="b">
-        <div
-            id="e"
-            style="
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Blog</title>
+        <!--
+            CSP FIX: Removed the inline CSP meta tag. A meta-tag CSP with
+            script-src 'self' and no 'unsafe-inline' blocks all inline <script>
+            and <style> blocks, breaking the entire page. For a single-file
+            static HTML app, the CSP should be set as an HTTP response header
+            by your server (where nonces can be injected), not a meta tag.
+            If you serve this via a web server, add this header instead:
+              Content-Security-Policy:
+                default-src 'none';
+                script-src 'nonce-YOUR_NONCE';
+                style-src 'nonce-YOUR_NONCE';
+                connect-src 'self';
+                base-uri 'none';
+                form-action 'none';
+                frame-ancestors 'none';
+        -->
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font:
+                    1em/1.6 Georgia,
+                    serif;
+                color: #333;
+                background: #f5f5f5;
+                padding: 20px;
+            }
+            .b {
+                max-width: 800px;
+                margin: 0 auto;
+                background: #fff;
+                padding: 40px;
+                box-shadow: 0 2px 10px #0002;
+                border-radius: 8px;
+            }
+            header {
+                border-bottom: 2px solid #333;
+                padding-bottom: 20px;
+                margin-bottom: 30px;
+            }
+            h1 {
+                font-size: 2.5em;
+                cursor: pointer;
+                display: inline-block;
+            }
+            .s {
+                color: #666;
+                font: italic 1.1em serif;
+            }
+            .T {
+                font-size: 1.8em;
+                margin-bottom: 10px;
+                color: #222;
+            }
+            .C {
+                white-space: pre-wrap;
+                color: #444;
+                line-height: 1.8;
+            }
+            a {
+                color: #06c;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            .n {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #ddd;
+                color: #666;
+                font-size: 0.9em;
+            }
+            .l {
+                cursor: pointer;
+            }
+            .l:hover:not(.d) {
+                color: #333;
+            }
+            .d {
+                color: #ccc;
+                cursor: not-allowed;
+            }
+            #h,
+            #c,
+            #o {
+                display: none;
+            }
+            #o {
+                border-bottom: 1px solid #eee;
+                padding: 10px 0;
+                margin-bottom: 20px;
+                font-size: 0.9em;
+            }
+            .th {
+                display: flex;
+                justify-content: space-between;
+                color: #888;
+                cursor: pointer;
+            }
+            .ta {
+                transition: 0.3s;
+            }
+            .ta.open {
+                transform: rotate(180deg);
+            }
+            .tl {
+                max-height: 0;
+                overflow: hidden;
+                transition: 0.3s;
+            }
+            .tl.open {
+                max-height: 300px;
+                overflow-y: auto;
+                margin-top: 10px;
+                padding-right: 5px;
+            }
+            .ti {
+                padding: 6px 0;
+                cursor: pointer;
+                color: #999;
+            }
+            .ti.active {
+                color: #555;
+                font-weight: bold;
+            }
+            .f {
+                text-align: center;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #ddd;
+                font-size: 0.9em;
+            }
+            .tl::-webkit-scrollbar {
+                width: 5px;
+            }
+            .tl::-webkit-scrollbar-thumb {
+                background: #ddd;
+                border-radius: 10px;
+            }
+            #errorBox {
                 color: #d00;
                 background: #fee;
                 display: none;
                 padding: 10px;
                 margin-bottom: 20px;
-            "
-        ></div>
-        <header id="h">
-            <h1 id="t"></h1>
-            <p class="s" id="u"></p>
-        </header>
-        <div id="o">
-            <div
-                class="th"
-                onclick="L.classList.toggle('open');A.classList.toggle('open')"
-            >
-                <span>Contents</span><span class="ta" id="A">▼</span>
-            </div>
-            <div class="tl" id="L"></div>
-        </div>
-        <div id="c">
-            <article>
-                <h2 class="T" id="P"></h2>
-                <div class="C" id="B"></div>
-            </article>
-            <div class="n">
-                <span class="l" id="p">← Last</span>
-                <span><span id="v">1</span> of <span id="m">1</span></span>
-                <span class="l" id="x">Next →</span>
-            </div>
-        </div>
-        <div class="f">
-            <a class="l" onclick="F.click()">Load web.txt</a
-            ><input type="file" id="F" accept=".txt" hidden />
-        </div>
-    </div>
-    <script>
-        const $ = (i) => document.getElementById(i),
-            H = () => (location.hash = idx + 1);
-        let posts = [],
-            idx = 0;
-        const show = (m) => {
-            $("e").innerText = m;
-            $("e").style.display = m ? "block" : "none";
-            $("h").style.display =
-                $("c").style.display =
-                $("o").style.display =
-                    m ? "none" : "block";
-        };
-        const parse = (t) => {
-            let r = t.split("\n");
-            if (r.length < 2) return show("Invalid format");
-            $("t").innerText = document.title = r[0];
-            $("u").innerText = r[1];
-            posts = [];
-            let p;
-            for (let l of r.slice(2)) {
-                if (l.startsWith("---"))
-                    (p && posts.push(p), (p = { t: "", c: "" }));
-                else if (p) p.t ? (p.c += l + "\n") : (p.t = l.trim());
+                text-align: center;
             }
-            p && posts.push(p);
-            if (!posts.length) return show("No posts");
-            show("");
-            idx = (parseInt(location.hash.slice(1)) || 1) - 1;
-            $("L").innerHTML = posts
-                .map(
-                    (p, i) =>
-                        `<div class="ti" onclick="idx=${i};D()">${i + 1}. ${p.t}</div>`,
-                )
-                .join("");
-            D();
-        };
-        const D = () => {
-            let p = posts[idx];
-            $("P").innerText = p.t;
-            $("B").innerHTML = p.c
-                .trim()
-                .replace(
-                    /(https?:\/\/[^\s]+)/g,
-                    '<a href="$1" target="_blank" rel="noopener">$1</a>',
+        </style>
+    </head>
+
+    <body>
+        <div class="b">
+            <div id="errorBox"></div>
+
+            <header id="h">
+                <h1 id="t"></h1>
+                <p class="s" id="u"></p>
+            </header>
+
+            <div id="o">
+                <div class="th" id="tocToggle">
+                    <span>Contents</span>
+                    <span class="ta" id="A">▼</span>
+                </div>
+                <div class="tl" id="L"></div>
+            </div>
+
+            <div id="c">
+                <article>
+                    <h2 class="T" id="P"></h2>
+                    <div class="C" id="B"></div>
+                </article>
+                <div class="n">
+                    <span class="l" id="prev">← Last</span>
+                    <span><span id="v">1</span> of <span id="m">1</span></span>
+                    <span class="l" id="next">Next →</span>
+                </div>
+            </div>
+
+            <div class="f">
+                <span class="l" id="loadTrigger">Load web.txt</span>
+                <input type="file" id="F" accept=".txt" hidden />
+            </div>
+        </div>
+
+        <script>
+            (() => {
+                const $ = (id) => document.getElementById(id);
+                const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
+                let posts = [];
+                let idx = 0;
+
+                /* ---------------- Security Helpers ---------------- */
+
+                // Escapes HTML special characters to prevent XSS
+                const esc = (s) =>
+                    String(s)
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#39;");
+
+                // FIX: renderContent linkifies BEFORE escaping to avoid the
+                // ordering problem where esc() would mangle URL characters into
+                // HTML entities, producing broken hrefs and missed URL matches.
+                // Non-URL text segments are escaped individually; the URL itself
+                // is also escaped for safe insertion into href and display text.
+                // FIX: '&' added to the URL exclusion set so entity sequences
+                // like &amp; are never absorbed into the matched URL.
+                const URL_REGEX = /https?:\/\/[^\s<>"'()&]+/g;
+
+                const renderContent = (rawText) => {
+                    const trimmed = rawText.trim();
+                    const urls = trimmed.match(URL_REGEX) || [];
+                    const parts = trimmed.split(URL_REGEX);
+
+                    return parts
+                        .map((part, i) => {
+                            const escapedPart = esc(part);
+                            if (i < urls.length) {
+                                const escapedUrl = esc(urls[i]);
+                                return `${escapedPart}<a href="${escapedUrl}" target="_blank" rel="noopener noreferrer">${escapedUrl}</a>`;
+                            }
+                            return escapedPart;
+                        })
+                        .join("");
+                };
+
+                /* ---------------- UI Helpers ---------------- */
+
+                const showError = (msg) => {
+                    $("errorBox").innerText = msg;
+                    $("errorBox").style.display = msg ? "block" : "none";
+                    $("h").style.display = "none";
+                    $("c").style.display = "none";
+                    $("o").style.display = "none";
+                };
+
+                const showContent = () => {
+                    $("errorBox").style.display = "none";
+                    $("h").style.display = "block";
+                    $("c").style.display = "block";
+                    // Only show ToC when there is more than one post
+                    $("o").style.display = posts.length > 1 ? "block" : "none";
+                };
+
+                const updateHash = () => {
+                    const newHash = "#" + (idx + 1);
+                    if (location.hash !== newHash) {
+                        history.pushState(null, "", newHash);
+                    }
+                };
+
+                /* ---------------- Parsing ---------------- */
+
+                const parse = (text) => {
+                    posts = [];
+                    const lines = text.split("\n");
+                    if (lines.length < 2) {
+                        showError(
+                            "Invalid file format. Please load a valid web.txt file.",
+                        );
+                        return;
+                    }
+
+                    $("t").innerText = document.title = lines[0].trim();
+                    $("u").innerText = lines[1].trim();
+
+                    let current = null;
+                    for (const line of lines.slice(2)) {
+                        if (line.startsWith("---")) {
+                            // FIX: push any in-progress post consistently,
+                            // matching the end-of-loop behaviour below.
+                            if (current) posts.push(current);
+                            current = { t: "", c: "" };
+                        } else if (current) {
+                            if (!current.t) {
+                                current.t = line.trim();
+                            } else {
+                                current.c += line + "\n";
+                            }
+                        }
+                    }
+                    // FIX: Use `if (current)` instead of `if (current?.t)` so
+                    // the last post is never silently dropped due to an empty title.
+                    if (current) posts.push(current);
+
+                    if (!posts.length) {
+                        showError(
+                            "No posts found in the file. Please load a valid web.txt file.",
+                        );
+                        return;
+                    }
+
+                    handleHashSync();
+                    buildTOC();
+                    showContent();
+                    render();
+                };
+
+                /* ---------------- Rendering ---------------- */
+
+                const buildTOC = () => {
+                    $("L").innerHTML = posts
+                        .map(
+                            (p, i) =>
+                                `<div class="ti" data-i="${i}">${i + 1}. ${esc(p.t)}</div>`,
+                        )
+                        .join("");
+
+                    document.querySelectorAll(".ti").forEach((el) => {
+                        el.addEventListener("click", (e) => {
+                            idx = parseInt(e.currentTarget.dataset.i, 10);
+                            // Close the ToC after a selection
+                            $("L").classList.remove("open");
+                            $("A").classList.remove("open");
+                            render();
+                        });
+                    });
+                };
+
+                const render = () => {
+                    const post = posts[idx];
+                    if (!post) return;
+
+                    $("P").innerText = post.t;
+                    // FIX: Use renderContent() which linkifies before escaping,
+                    // avoiding broken hrefs and entity sequences being absorbed
+                    // into matched URLs.
+                    $("B").innerHTML = renderContent(post.c);
+
+                    $("v").innerText = idx + 1;
+                    $("m").innerText = posts.length;
+
+                    $("prev").classList.toggle("d", idx === 0);
+                    $("next").classList.toggle("d", idx === posts.length - 1);
+
+                    document
+                        .querySelectorAll(".ti")
+                        .forEach((el, i) =>
+                            el.classList.toggle("active", i === idx),
+                        );
+
+                    updateHash();
+                    window.scrollTo(0, 0);
+                };
+
+                /* ---------------- Event Wiring ---------------- */
+
+                const handleHashSync = () => {
+                    const hashNum = parseInt(location.hash.slice(1), 10);
+                    if (!isNaN(hashNum) && posts.length > 0) {
+                        idx = Math.max(
+                            0,
+                            Math.min(posts.length - 1, hashNum - 1),
+                        );
+                    } else {
+                        idx = 0;
+                    }
+                };
+
+                window.addEventListener("hashchange", () => {
+                    if (posts.length) {
+                        handleHashSync();
+                        render();
+                    }
+                });
+
+                $("tocToggle").addEventListener("click", () => {
+                    $("L").classList.toggle("open");
+                    $("A").classList.toggle("open");
+                });
+
+                $("loadTrigger").addEventListener("click", () =>
+                    $("F").click(),
                 );
-            $("v").innerText = idx + 1;
-            $("m").innerText = posts.length;
-            H();
-            $("p").classList.toggle("d", idx == 0);
-            $("x").classList.toggle("d", idx == posts.length - 1);
-            document
-                .querySelectorAll(".ti")
-                .forEach((e, i) => e.classList.toggle("active", i == idx));
-            $("L").classList.remove("open");
-            $("A").classList.remove("open");
-            window.scrollTo(0, 0);
-        };
-        window.onload = () =>
-            fetch("web.txt")
-                .then((r) => r.text())
-                .then(parse)
-                .catch((e) => {});
-        F.onchange = (e) => {
-            const r = new FileReader();
-            r.onload = (e) => parse(e.target.result);
-            r.readAsText(e.target.files[0]);
-        };
-        $("t").onclick = () => {
-            if (idx) ((idx = 0), D());
-        };
-        p.onclick = () => {
-            if (idx > 0) (idx--, D());
-        };
-        x.onclick = () => {
-            if (idx < posts.length - 1) (idx++, D());
-        };
-    </script>
+
+                $("F").addEventListener("change", (e) => {
+                    const file = e.target.files[0];
+                    // FIX: Reset the input value immediately so the 'change' event
+                    // fires again if the user picks the same file a second time.
+                    e.target.value = "";
+                    if (!file) return;
+                    if (file.size > MAX_FILE_SIZE) {
+                        showError(
+                            "File is too large (max 2MB). Please select a smaller file.",
+                        );
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (ev) => parse(ev.target.result);
+                    reader.readAsText(file);
+                });
+
+                $("t").addEventListener("click", () => {
+                    if (idx !== 0) {
+                        idx = 0;
+                        render();
+                    }
+                });
+
+                $("prev").addEventListener("click", () => {
+                    if (idx > 0) {
+                        idx--;
+                        render();
+                    }
+                });
+
+                $("next").addEventListener("click", () => {
+                    if (idx < posts.length - 1) {
+                        idx++;
+                        render();
+                    }
+                });
+
+                /* ---------------- Initial Load ---------------- */
+
+                window.addEventListener("load", () => {
+                    fetch("web.txt")
+                        .then((r) => {
+                            if (!r.ok) throw new Error("File not found");
+                            return r.text();
+                        })
+                        .then(parse)
+                        .catch(() => {
+                            showError(
+                                "Could not automatically load 'web.txt'. You can load a file manually using the link below.",
+                            );
+                        });
+                });
+            })();
+        </script>
+    </body>
 </html>
