@@ -2,24 +2,8 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
         <title>Blog</title>
-        <!--
-            CSP FIX: Removed the inline CSP meta tag. A meta-tag CSP with
-            script-src 'self' and no 'unsafe-inline' blocks all inline <script>
-            and <style> blocks, breaking the entire page. For a single-file
-            static HTML app, the CSP should be set as an HTTP response header
-            by your server (where nonces can be injected), not a meta tag.
-            If you serve this via a web server, add this header instead:
-              Content-Security-Policy:
-                default-src 'none';
-                script-src 'nonce-YOUR_NONCE';
-                style-src 'nonce-YOUR_NONCE';
-                connect-src 'self';
-                base-uri 'none';
-                form-action 'none';
-                frame-ancestors 'none';
-        -->
         <style>
             * {
                 margin: 0;
@@ -149,7 +133,7 @@
                 background: #ddd;
                 border-radius: 10px;
             }
-            #errorBox {
+            #e {
                 color: #d00;
                 background: #fee;
                 display: none;
@@ -159,24 +143,19 @@
             }
         </style>
     </head>
-
     <body>
         <div class="b">
-            <div id="errorBox"></div>
-
+            <div id="e"></div>
             <header id="h">
                 <h1 id="t"></h1>
                 <p class="s" id="u"></p>
             </header>
-
             <div id="o">
                 <div class="th" id="tocToggle">
-                    <span>Contents</span>
-                    <span class="ta" id="A">▼</span>
+                    <span>Contents</span><span class="ta" id="A">▼</span>
                 </div>
                 <div class="tl" id="L"></div>
             </div>
-
             <div id="c">
                 <article>
                     <h2 class="T" id="P"></h2>
@@ -188,24 +167,18 @@
                     <span class="l" id="next">Next →</span>
                 </div>
             </div>
-
             <div class="f">
-                <span class="l" id="loadTrigger">Load web.txt</span>
-                <input type="file" id="F" accept=".txt" hidden />
+                <span class="l" id="loadTrigger">Load web.txt</span
+                ><input type="file" id="F" accept=".txt" hidden />
             </div>
         </div>
-
         <script>
             (() => {
                 const $ = (id) => document.getElementById(id);
-                const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+                const R = /https?:\/\/[^\s<>"'()&]+/g;
+                let posts = [],
+                    idx = 0;
 
-                let posts = [];
-                let idx = 0;
-
-                /* ---------------- Security Helpers ---------------- */
-
-                // Escapes HTML special characters to prevent XSS
                 const esc = (s) =>
                     String(s)
                         .replace(/&/g, "&amp;")
@@ -214,234 +187,148 @@
                         .replace(/"/g, "&quot;")
                         .replace(/'/g, "&#39;");
 
-                // FIX: renderContent linkifies BEFORE escaping to avoid the
-                // ordering problem where esc() would mangle URL characters into
-                // HTML entities, producing broken hrefs and missed URL matches.
-                // Non-URL text segments are escaped individually; the URL itself
-                // is also escaped for safe insertion into href and display text.
-                // FIX: '&' added to the URL exclusion set so entity sequences
-                // like &amp; are never absorbed into the matched URL.
-                const URL_REGEX = /https?:\/\/[^\s<>"'()&]+/g;
-
-                const renderContent = (rawText) => {
-                    const trimmed = rawText.trim();
-                    const urls = trimmed.match(URL_REGEX) || [];
-                    const parts = trimmed.split(URL_REGEX);
-
-                    return parts
-                        .map((part, i) => {
-                            const escapedPart = esc(part);
-                            if (i < urls.length) {
-                                const escapedUrl = esc(urls[i]);
-                                return `${escapedPart}<a href="${escapedUrl}" target="_blank" rel="noopener noreferrer">${escapedUrl}</a>`;
-                            }
-                            return escapedPart;
-                        })
+                const linkify = (t) => {
+                    const urls = t.match(R) || [];
+                    return t
+                        .split(R)
+                        .map(
+                            (p, i) =>
+                                esc(p) +
+                                (urls[i]
+                                    ? `<a href="${esc(urls[i])}" target="_blank" rel="noopener noreferrer">${esc(urls[i])}</a>`
+                                    : ""),
+                        )
                         .join("");
                 };
 
-                /* ---------------- UI Helpers ---------------- */
-
-                const showError = (msg) => {
-                    $("errorBox").innerText = msg;
-                    $("errorBox").style.display = msg ? "block" : "none";
-                    $("h").style.display = "none";
-                    $("c").style.display = "none";
-                    $("o").style.display = "none";
+                const err = (msg) => {
+                    $("e").innerText = msg;
+                    $("e").style.display = msg ? "block" : "none";
+                    ["h", "c", "o"].forEach(
+                        (id) => ($(id).style.display = "none"),
+                    );
                 };
 
-                const showContent = () => {
-                    $("errorBox").style.display = "none";
-                    $("h").style.display = "block";
-                    $("c").style.display = "block";
-                    // Only show ToC when there is more than one post
+                const show = () => {
+                    $("e").style.display = "none";
+                    $("h").style.display = $("c").style.display = "block";
                     $("o").style.display = posts.length > 1 ? "block" : "none";
                 };
 
-                const updateHash = () => {
-                    const newHash = "#" + (idx + 1);
-                    if (location.hash !== newHash) {
-                        history.pushState(null, "", newHash);
-                    }
+                const syncHash = () => {
+                    const n = parseInt(location.hash.slice(1), 10);
+                    idx = isNaN(n)
+                        ? 0
+                        : Math.max(0, Math.min(posts.length - 1, n - 1));
                 };
 
-                /* ---------------- Parsing ---------------- */
+                const render = () => {
+                    const p = posts[idx];
+                    if (!p) return;
+                    $("P").innerText = p.t;
+                    $("B").innerHTML = linkify(p.c.trim());
+                    $("v").innerText = idx + 1;
+                    $("m").innerText = posts.length;
+                    $("prev").classList.toggle("d", idx === 0);
+                    $("next").classList.toggle("d", idx === posts.length - 1);
+                    document
+                        .querySelectorAll(".ti")
+                        .forEach((el, i) =>
+                            el.classList.toggle("active", i === idx),
+                        );
+                    location.hash !== "#" + (idx + 1) &&
+                        history.pushState(null, "", "#" + (idx + 1));
+                    scrollTo(0, 0);
+                };
 
                 const parse = (text) => {
                     posts = [];
                     const lines = text.split("\n");
-                    if (lines.length < 2) {
-                        showError(
-                            "Invalid file format. Please load a valid web.txt file.",
-                        );
-                        return;
-                    }
-
+                    if (lines.length < 2) return err("Invalid file format.");
                     $("t").innerText = document.title = lines[0].trim();
                     $("u").innerText = lines[1].trim();
-
-                    let current = null;
-                    for (const line of lines.slice(2)) {
-                        if (line.startsWith("---")) {
-                            // FIX: push any in-progress post consistently,
-                            // matching the end-of-loop behaviour below.
-                            if (current) posts.push(current);
-                            current = { t: "", c: "" };
-                        } else if (current) {
-                            if (!current.t) {
-                                current.t = line.trim();
-                            } else {
-                                current.c += line + "\n";
-                            }
-                        }
+                    let cur = null;
+                    for (const l of lines.slice(2)) {
+                        if (l.startsWith("---")) {
+                            if (cur) posts.push(cur);
+                            cur = { t: "", c: "" };
+                        } else if (cur)
+                            cur.t ? (cur.c += l + "\n") : (cur.t = l.trim());
                     }
-                    // FIX: Use `if (current)` instead of `if (current?.t)` so
-                    // the last post is never silently dropped due to an empty title.
-                    if (current) posts.push(current);
-
-                    if (!posts.length) {
-                        showError(
-                            "No posts found in the file. Please load a valid web.txt file.",
-                        );
-                        return;
-                    }
-
-                    handleHashSync();
-                    buildTOC();
-                    showContent();
-                    render();
-                };
-
-                /* ---------------- Rendering ---------------- */
-
-                const buildTOC = () => {
+                    if (cur) posts.push(cur);
+                    if (!posts.length) return err("No posts found.");
                     $("L").innerHTML = posts
                         .map(
                             (p, i) =>
                                 `<div class="ti" data-i="${i}">${i + 1}. ${esc(p.t)}</div>`,
                         )
                         .join("");
-
-                    document.querySelectorAll(".ti").forEach((el) => {
+                    document.querySelectorAll(".ti").forEach((el) =>
                         el.addEventListener("click", (e) => {
-                            idx = parseInt(e.currentTarget.dataset.i, 10);
-                            // Close the ToC after a selection
+                            idx = +e.currentTarget.dataset.i;
                             $("L").classList.remove("open");
                             $("A").classList.remove("open");
                             render();
-                        });
-                    });
+                        }),
+                    );
+                    syncHash();
+                    show();
+                    render();
                 };
 
-                const render = () => {
-                    const post = posts[idx];
-                    if (!post) return;
-
-                    $("P").innerText = post.t;
-                    // FIX: Use renderContent() which linkifies before escaping,
-                    // avoiding broken hrefs and entity sequences being absorbed
-                    // into matched URLs.
-                    $("B").innerHTML = renderContent(post.c);
-
-                    $("v").innerText = idx + 1;
-                    $("m").innerText = posts.length;
-
-                    $("prev").classList.toggle("d", idx === 0);
-                    $("next").classList.toggle("d", idx === posts.length - 1);
-
-                    document
-                        .querySelectorAll(".ti")
-                        .forEach((el, i) =>
-                            el.classList.toggle("active", i === idx),
-                        );
-
-                    updateHash();
-                    window.scrollTo(0, 0);
-                };
-
-                /* ---------------- Event Wiring ---------------- */
-
-                const handleHashSync = () => {
-                    const hashNum = parseInt(location.hash.slice(1), 10);
-                    if (!isNaN(hashNum) && posts.length > 0) {
-                        idx = Math.max(
-                            0,
-                            Math.min(posts.length - 1, hashNum - 1),
-                        );
-                    } else {
-                        idx = 0;
-                    }
-                };
-
-                window.addEventListener("hashchange", () => {
-                    if (posts.length) {
-                        handleHashSync();
-                        render();
-                    }
-                });
-
-                $("tocToggle").addEventListener("click", () => {
-                    $("L").classList.toggle("open");
-                    $("A").classList.toggle("open");
-                });
-
+                $("tocToggle").addEventListener("click", () =>
+                    [$("L"), $("A")].forEach((el) =>
+                        el.classList.toggle("open"),
+                    ),
+                );
                 $("loadTrigger").addEventListener("click", () =>
                     $("F").click(),
                 );
-
                 $("F").addEventListener("change", (e) => {
-                    const file = e.target.files[0];
-                    // FIX: Reset the input value immediately so the 'change' event
-                    // fires again if the user picks the same file a second time.
+                    const f = e.target.files[0];
                     e.target.value = "";
-                    if (!file) return;
-                    if (file.size > MAX_FILE_SIZE) {
-                        showError(
-                            "File is too large (max 2MB). Please select a smaller file.",
-                        );
-                        return;
-                    }
-                    const reader = new FileReader();
-                    reader.onload = (ev) => parse(ev.target.result);
-                    reader.readAsText(file);
+                    if (!f) return;
+                    if (f.size > 2097152)
+                        return err("File too large (max 2MB).");
+                    const r = new FileReader();
+                    r.onload = (e) => parse(e.target.result);
+                    r.readAsText(f);
                 });
-
                 $("t").addEventListener("click", () => {
-                    if (idx !== 0) {
+                    if (idx) {
                         idx = 0;
                         render();
                     }
                 });
-
                 $("prev").addEventListener("click", () => {
                     if (idx > 0) {
                         idx--;
                         render();
                     }
                 });
-
                 $("next").addEventListener("click", () => {
                     if (idx < posts.length - 1) {
                         idx++;
                         render();
                     }
                 });
-
-                /* ---------------- Initial Load ---------------- */
-
-                window.addEventListener("load", () => {
-                    fetch("web.txt")
-                        .then((r) => {
-                            if (!r.ok) throw new Error("File not found");
-                            return r.text();
-                        })
-                        .then(parse)
-                        .catch(() => {
-                            showError(
-                                "Could not automatically load 'web.txt'. You can load a file manually using the link below.",
-                            );
-                        });
+                window.addEventListener("hashchange", () => {
+                    if (posts.length) {
+                        syncHash();
+                        render();
+                    }
                 });
+                fetch("web.txt")
+                    .then((r) => {
+                        if (!r.ok) throw 0;
+                        return r.text();
+                    })
+                    .then(parse)
+                    .catch(() =>
+                        err(
+                            "Could not load 'web.txt'. Load a file manually below.",
+                        ),
+                    );
             })();
         </script>
     </body>
