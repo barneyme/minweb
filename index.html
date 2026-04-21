@@ -201,6 +201,34 @@
                         .join("");
                 };
 
+                const drawFavicon = (char) => {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = 64;
+                    canvas.height = 64;
+                    const ctx = canvas.getContext("2d");
+
+                    // Rounded square background
+                    ctx.fillStyle = "#333";
+                    ctx.beginPath();
+                    ctx.roundRect(0, 0, 64, 64, 12);
+                    ctx.fill();
+
+                    // Text
+                    ctx.fillStyle = "#fff";
+                    ctx.font = "bold 42px Georgia, serif";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText(char.toUpperCase(), 32, 35);
+
+                    let link = document.querySelector("link[rel~='icon']");
+                    if (!link) {
+                        link = document.createElement("link");
+                        link.rel = "icon";
+                        document.head.appendChild(link);
+                    }
+                    link.href = canvas.toDataURL();
+                };
+
                 const err = (msg) => {
                     $("e").innerText = msg;
                     $("e").style.display = msg ? "block" : "none";
@@ -245,7 +273,13 @@
                     posts = [];
                     const lines = text.split("\n");
                     if (lines.length < 2) return err("Invalid file format.");
-                    $("t").innerText = document.title = lines[0].trim();
+                    
+                    const blogTitle = lines[0].trim();
+                    $("t").innerText = document.title = blogTitle;
+                    
+                    // Generate favicon from first letter
+                    if (blogTitle) drawFavicon(blogTitle[0]);
+
                     $("u").innerText = lines[1].trim();
                     let cur = null;
                     for (const l of lines.slice(2)) {
