@@ -15,6 +15,7 @@ Features include:
 - Converts URLs in post content into clickable links.
 - Automatically loads web.txt on page load, or lets you manually upload a file via "Load web.txt" link.
 - Clean, newspaper-style layout with Georgia serif font.
+- Displays icon to tab bar.
 - Responsive padding and typography.
 - Very fast loading.
 - Hover effects on interactive elements.
@@ -27,7 +28,7 @@ Setup.
 
 MIN WEB is quick and easy to setup.
 
-1. Download MINWEB.ZIP from https://drive.google.com/file/d/1qHAks0l_gCFlfj0rZVj0RAY8OoWqcp7s/view?usp=sharing and extract it.
+1. Download MINWEB.ZIP from https://github.com/barneyme/minweb/blob/main/minweb.zip and extract it.
 2. Open WEB.TXT in any plaintext editor. (E.G. Notepad or Textedit.)
 3. Update the first two lines of the file to set your website or blog name and sub-title.
 4. Write your content separating each page or post with ---.
@@ -69,7 +70,7 @@ Credit.
 
 MIN WEB was created by Barney Matthews.
 
-Find him on the web at https://minweb.cc/blog.html .
+Find him on the web at https://barney.me .
 
 Some of Barneys other webapps include:
 https://not3.cc - a simple, touch friendly, note web app.
